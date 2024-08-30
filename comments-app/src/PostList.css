@@ -1,0 +1,20 @@
+.comment-list {
+    margin-top: 30px;
+    margin-bottom: 50px;
+  }
+  
+  .comment {
+    border-top: 1px solid #ddd;
+    border-bottom:1px solid #ddd; ;
+    padding: 5px;
+  }
+  
+  .comment-text {
+    font-size: 1em;
+    color: #555;
+  }
+  
+  .no-comments {
+    font-style: italic;
+    color: #888;
+  }

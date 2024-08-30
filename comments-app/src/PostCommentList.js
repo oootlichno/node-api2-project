@@ -1,37 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './PostCommentList.css'; // Importing CSS file for styling
 
 const PostCommentList = ({ postId }) => {
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://localhost:9000/api/posts/${postId}/comments`)
-      .then(response => setComments(response.data))
-      .catch(error => console.error('Error fetching comments:', error));
+    const fetchComments = async () => {
+      try {
+        const res = await axios.get(`http://localhost:9000/api/posts/${postId}/comments`);
+        setComments(res.data);
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    };
+
+    fetchComments();
   }, [postId]);
 
-  const handleDeleteComment = (commentId) => {
-    axios.delete(`http://localhost:9000/api/comments/${commentId}`)
-      .then(() => {
-        setComments(comments.filter(comment => comment.id !== commentId));
-      })
-      .catch(error => console.error('Error deleting comment:', error));
+  const handleDelete = async (commentId) => {
+    try {
+      await axios.delete(`http://localhost:9000/api/comments/${commentId}`);
+      setComments(comments.filter(comment => comment.id !== commentId));
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
   };
 
   return (
-    <div>
-      <h3>Comments:</h3>
+    <div className="comment-list">
       {comments.length > 0 ? (
-        <ul>
-          {comments.map(comment => (
-            <li key={comment.id}>
-              <p>{comment.text}</p>
-              <button onClick={() => handleDeleteComment(comment.id)}>Delete</button>
-            </li>
-          ))}
-        </ul>
+        comments.map(comment => (
+          <div key={comment.id} className="comment">
+            <p className="comment-text">{comment.text}</p>
+            <button className="delete-button" onClick={() => handleDelete(comment.id)}>Delete</button>
+          </div>
+        ))
       ) : (
-        <p>No comments yet.</p>
+        <p className="no-comments">No comments yet.</p>
       )}
     </div>
   );
