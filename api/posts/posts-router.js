@@ -134,5 +134,58 @@ router.delete("/:id", async (req, res) => {
     }
   });
 
+  router.post("/:id/comments", async (req, res) => {
+    try {
+      const postId = req.params.id;
+      const { text } = req.body;
+  
+      if (!text) {
+        return res.status(400).json({
+          message: "Please provide text for the comment",
+        });
+      }
+  
+      const post = await Post.findById(postId);
+      if (!post) {
+        return res.status(404).json({
+          message: "The post with the specified ID does not exist",
+        });
+      }
+  
+      const newComment = await Comment.create({ text, post_id: postId });
+      res.status(201).json(newComment);
+  
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        message: "The comment could not be added",
+      });
+    }
+  });
+
+  router.delete("/comments/:id", async (req, res) => {
+    try {
+      const commentId = req.params.id;
+        const deletedComment = await Comment.delete(commentId);
+  
+      if (!deletedComment) {
+        return res.status(404).json({
+          message: "The comment with the specified ID does not exist",
+        });
+      }
+  
+      res.status(200).json({
+        message: "Comment was successfully deleted",
+        id: commentId,
+      });
+  
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        message: "The comment could not be removed",
+      });
+    }
+  });
+
 
 module.exports = router;
